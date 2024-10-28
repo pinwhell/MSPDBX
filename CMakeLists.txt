@@ -4,6 +4,18 @@ project(MSPDBX)
 
 include (CBuildKit)
 
+option(USE_STATIC_LINKING "Use static linking for the runtime" ON)
+
+if (USE_STATIC_LINKING)
+    if (MSVC)
+        # MSVC specific static linking flag
+        add_compile_options(/MT$<$<CONFIG:Debug>:d>)
+    else()
+        # GCC/Clang specific static linking flag
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
+    endif()
+endif()
+
 file(GLOB MSPDBX_SRC src/*.cpp)
 
 add_library_ns(mspdbx mspdbx STATIC ${MSPDBX_SRC})
